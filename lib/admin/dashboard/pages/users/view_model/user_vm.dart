@@ -20,7 +20,8 @@ class UserVM extends ChangeNotifier {
             isNotEqualTo: 2,
           )
           .get();
-      userList = q.docs.map<UserModel>((e) => UserModel.fromJson(e.data())).toList();
+      userList =
+          q.docs.map<UserModel>((e) => UserModel.fromJson(e.data())).toList();
       debugPrint("userlist" + userList.length.toString());
       notifyListeners();
 

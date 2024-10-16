@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:sweetchickwardrobe/admin/dashboard/pages/orders/view/widgets/order_dialog.dart';
 
 import 'package:sweetchickwardrobe/constants/enums.dart';
 import 'package:sweetchickwardrobe/constants/firebase_collections.dart';
@@ -21,7 +22,8 @@ import 'order_grid.dart';
 class OrderGridSource extends DataGridSource {
   /// Creates the order data source class with required details.
   OrderGridSource({this.model, required this.isWebOrDesktop}) {
-    var vm = Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false);
+    var vm =
+        Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false);
     tickets = getLists();
 
     buildDataGridRows(vm);
@@ -42,7 +44,12 @@ class OrderGridSource extends DataGridSource {
   /// Building DataGridRows
   void buildDataGridRows(OrderVM vm) {
     if (vm.selectedIndex == 0) {
-      dataGridRows = tickets.where((element) => element.orderId.toString().isCaseInsensitiveContains(vm.searchController.text)).toList().map<DataGridRow>((OrderModel model) {
+      dataGridRows = tickets
+          .where((element) => element.orderId
+              .toString()
+              .isCaseInsensitiveContains(vm.searchController.text))
+          .toList()
+          .map<DataGridRow>((OrderModel model) {
         return DataGridRow(cells: <DataGridCell>[
           DataGridCell<OrderModel>(columnName: 'sr_no', value: model),
           DataGridCell<OrderModel>(columnName: 'name', value: model),
@@ -53,7 +60,12 @@ class OrderGridSource extends DataGridSource {
         ]);
       }).toList();
     } else {
-      dataGridRows = tickets.where((element) => element.orderId.toString().isCaseInsensitiveContains(vm.searchController.text)).toList().map<DataGridRow>((OrderModel model) {
+      dataGridRows = tickets
+          .where((element) => element.orderId
+              .toString()
+              .isCaseInsensitiveContains(vm.searchController.text))
+          .toList()
+          .map<DataGridRow>((OrderModel model) {
         return DataGridRow(cells: <DataGridCell>[
           DataGridCell<OrderModel>(columnName: 'sr_no', value: model),
           DataGridCell<OrderModel>(columnName: 'name', value: model),
@@ -79,7 +91,8 @@ class OrderGridSource extends DataGridSource {
     if (isWebOrDesktop) {
       OrderModel model = row.getCells()[0].value;
       DateTime now = DateTime.now();
-      var vm = Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false);
+      var vm = Provider.of<OrderVM>(navigatorKey.currentState!.context,
+          listen: false);
       return DataGridRowAdapter(color: backgroundColor, cells: <Widget>[
         /// Serial Number
         Container(
@@ -89,19 +102,33 @@ class OrderGridSource extends DataGridSource {
             "${rowIndex + 1}",
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.left,
-            style: R.textStyles.poppins(fontSize: 12, fontWeight: FontWeight.w500),
+            style:
+                R.textStyles.poppins(fontSize: 12, fontWeight: FontWeight.w500),
           ),
         ),
 
         /// Name
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            model.userId ?? "",
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.left,
-            style: R.textStyles.poppins(fontSize: 12, color: R.colors.black, fontWeight: FontWeight.w600),
+        InkWell(
+          onTap: () {
+            showDialog(
+              context: navigatorKey.currentState!.context,
+              builder: (context) {
+                return OrderDialog(order: model);
+              },
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              model.userId ?? "",
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.left,
+              style: R.textStyles.poppins(
+                  fontSize: 12,
+                  color: R.colors.black,
+                  fontWeight: FontWeight.w600),
+            ),
           ),
         ),
 
@@ -113,7 +140,10 @@ class OrderGridSource extends DataGridSource {
             model.paymentMethod?.type ?? "",
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.left,
-            style: R.textStyles.poppins(fontSize: 12, color: R.colors.black, fontWeight: FontWeight.w500),
+            style: R.textStyles.poppins(
+                fontSize: 12,
+                color: R.colors.black,
+                fontWeight: FontWeight.w500),
           ),
         ),
 
@@ -125,7 +155,10 @@ class OrderGridSource extends DataGridSource {
             GlobalFunction.getDateTime(model.orderDate?.toDate() ?? now),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.left,
-            style: R.textStyles.poppins(fontSize: 12, color: R.colors.black, fontWeight: FontWeight.w500),
+            style: R.textStyles.poppins(
+                fontSize: 12,
+                color: R.colors.black,
+                fontWeight: FontWeight.w500),
           ),
         ),
 
@@ -211,8 +244,10 @@ class OrderGridSource extends DataGridSource {
       return DataGridRowAdapter(
           color: backgroundColor,
           cells: row.getCells().map<Widget>((DataGridCell dataCell) {
-            if (dataCell.columnName == 'id' || dataCell.columnName == 'UserId') {
-              return buildWidget(alignment: Alignment.centerRight, value: dataCell.value!);
+            if (dataCell.columnName == 'id' ||
+                dataCell.columnName == 'UserId') {
+              return buildWidget(
+                  alignment: Alignment.centerRight, value: dataCell.value!);
             } else {
               return buildWidget(value: dataCell.value!);
             }
@@ -222,7 +257,8 @@ class OrderGridSource extends DataGridSource {
 
   @override
   Future<void> handleLoadMoreRows() async {
-    var vm = Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false);
+    var vm =
+        Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false);
     await Future<void>.delayed(const Duration(seconds: 5));
     tickets = getLists();
     buildDataGridRows(vm);
@@ -231,7 +267,8 @@ class OrderGridSource extends DataGridSource {
 
   @override
   Future<void> handleRefresh() async {
-    var vm = Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false);
+    var vm =
+        Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false);
     await Future<void>.delayed(const Duration(seconds: 5));
     tickets = getLists();
     buildDataGridRows(vm);
@@ -239,7 +276,11 @@ class OrderGridSource extends DataGridSource {
   }
 
   @override
-  Widget? buildTableSummaryCellWidget(GridTableSummaryRow summaryRow, GridSummaryColumn? summaryColumn, RowColumnIndex rowColumnIndex, String summaryValue) {
+  Widget? buildTableSummaryCellWidget(
+      GridTableSummaryRow summaryRow,
+      GridSummaryColumn? summaryColumn,
+      RowColumnIndex rowColumnIndex,
+      String summaryValue) {
     Widget buildCell(String value, EdgeInsets padding, Alignment alignment) {
       return Container(
         padding: padding,
@@ -253,21 +294,26 @@ class OrderGridSource extends DataGridSource {
     }
 
     if (summaryRow.showSummaryInRow) {
-      return buildCell(summaryValue, const EdgeInsets.all(16.0), Alignment.centerLeft);
+      return buildCell(
+          summaryValue, const EdgeInsets.all(16.0), Alignment.centerLeft);
     } else if (summaryValue.isNotEmpty) {
       if (summaryColumn!.columnName == 'freight') {
         summaryValue = double.parse(summaryValue).toStringAsFixed(2);
       }
 
-      summaryValue = 'Sum: ${NumberFormat.currency(locale: 'en_US', decimalDigits: 0, symbol: r'$').format(double.parse(summaryValue))}';
+      summaryValue =
+          'Sum: ${NumberFormat.currency(locale: 'en_US', decimalDigits: 0, symbol: r'$').format(double.parse(summaryValue))}';
 
-      return buildCell(summaryValue, const EdgeInsets.all(8.0), Alignment.centerRight);
+      return buildCell(
+          summaryValue, const EdgeInsets.all(8.0), Alignment.centerRight);
     }
     return null;
   }
 
   List<OrderModel> getLists() {
-    return Provider.of<OrderVM>(navigatorKey.currentState!.context, listen: false).orderList;
+    return Provider.of<OrderVM>(navigatorKey.currentState!.context,
+            listen: false)
+        .orderList;
   }
 
   Future<void> updateStatus(String id, int status) async {

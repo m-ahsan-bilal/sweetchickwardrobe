@@ -29,6 +29,7 @@ class GlobalWidgets {
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -122,21 +123,22 @@ class GlobalWidgets {
               }),
             ),
 
-            const SizedBox(height: 40),
-
-            // Categories Row
-
-            // CategoryRow(),
-
-            const SizedBox(height: 40),
+            // const SizedBox(height: 20),
 
             // Contact Us, Privacy Policy, etc.
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.start, // Align everything to the left
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align vertically from the top
               children: [
+                // Left text links
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 30,
+                    ),
                     InkWell(
                       onTap: () {
                         context.go("/contact_us");
@@ -157,44 +159,50 @@ class GlobalWidgets {
                     ),
                   ],
                 ),
-                CategoryColumn(),
-                Row(
-                  children: List.generate(
-                      context.watch<BaseVm>().appData?.socialLinks?.length ?? 0,
-                      (index) {
-                    final link =
-                        context.watch<BaseVm>().appData?.socialLinks?[index];
-                    return IconButton(
-                      color: R.colors.transparent,
-                      style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStatePropertyAll(R.colors.transparent)),
-                      icon: Row(
-                        children: [
-                          Image.network(
-                            link?.imageUrl ?? "",
-                            fit: BoxFit.cover,
-                            height: 25,
-                            width: 25,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                height: 25,
-                                width: 25,
-                                child: Icon(Icons.error),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      onPressed: () {
-                        html.window.open(link?.url ?? "", 'new tab');
-                      },
-                    );
-                  }),
-                )
+
+                const SizedBox(width: 10),
+
+                buildCategoriesColumn(context),
+
+                Spacer(),
+
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.end, // Align to the far right
+                    children: List.generate(
+                        context.watch<BaseVm>().appData?.socialLinks?.length ??
+                            0, (index) {
+                      final link =
+                          context.watch<BaseVm>().appData?.socialLinks?[index];
+                      return IconButton(
+                        color: R.colors.transparent,
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStatePropertyAll(R.colors.transparent)),
+                        icon: Image.network(
+                          link?.imageUrl ?? "",
+                          fit: BoxFit.cover,
+                          height: 25,
+                          width: 25,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 25,
+                              width: 25,
+                              child: Icon(Icons.error),
+                            );
+                          },
+                        ),
+                        onPressed: () {
+                          html.window.open(link?.url ?? "", 'new tab');
+                        },
+                      );
+                    }),
+                  ),
+                ),
               ],
             ),
-
             const SizedBox(height: 10),
             const Text("© 2024 SweetChickWardrobe. All Rights Reserved."),
           ],
@@ -336,10 +344,10 @@ class GlobalWidgets {
   //   );
   // }
 
-  static Widget buildHeader(BuildContext context) {
+  static Widget buildHeader(BuildContext context, {bool showCat = true}) {
     return GradientWrapper(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           children: [
             Row(
@@ -439,8 +447,9 @@ class GlobalWidgets {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            CategoryRow(),
+
+            // CategoryRow(),
+            if (showCat) buildCategoriesRow(context),
           ],
         ),
       ),

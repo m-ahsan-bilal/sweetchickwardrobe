@@ -70,12 +70,11 @@ class _ShopViewState extends State<ShopView> {
   Widget build(BuildContext context) {
     var vm = Provider.of<BaseVm>(context);
     return Scaffold(
-
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GlobalWidgets.buildHeader(context),
+            GlobalWidgets.buildHeader(context, showCat: false),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(

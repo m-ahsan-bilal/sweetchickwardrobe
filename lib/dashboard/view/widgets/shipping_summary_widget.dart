@@ -33,7 +33,10 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
   final shippingFee = 0.0;
   double taxAmount = 0;
 // subtotal
-  double get subtotal => context.read<BaseVm>().cartItems.fold(0, (sum, item) => sum + (item.product.price ?? 0) * item.quantity);
+  double get subtotal => context
+      .read<BaseVm>()
+      .cartItems
+      .fold(0, (sum, item) => sum + (item.product.price ?? 0) * item.quantity);
 // Adjust shippingFee as necessary
   double get grandTotal => subtotal - discount + shippingFee;
   String _address = '';
@@ -47,7 +50,7 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
   String? state;
   String? country;
   Map? mapUser;
-
+  bool isLoading = false;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((t) async {
@@ -62,10 +65,14 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
       log("----------------------------------------------------- $userId");
       mapUser = await GlobalFunction.updateUser();
 
-      await vm.getAdditionalInfo(userId);
+      isLoading = await vm.getAdditionalInfo(userId);
 
-      _postalcodeController.text = vm.additionalInfoModel?.contactInfo?.shippingAddress?.postalCode ?? "";
-      _addressController.text = vm.additionalInfoModel?.contactInfo?.shippingAddress?.addressLine1 ?? "";
+      _postalcodeController.text =
+          vm.additionalInfoModel?.contactInfo?.shippingAddress?.postalCode ??
+              "";
+      _addressController.text =
+          vm.additionalInfoModel?.contactInfo?.shippingAddress?.addressLine1 ??
+              "";
       if (mapUser != null) {
         _phoneController.text = mapUser!['phone'] ?? "";
       }
@@ -109,25 +116,28 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
               ),
             ),
             SizedBox(height: 10),
-            CountryPicker(
-              city: (value) {
-                city = value;
-                log("value $value");
-                log("city $city");
-              },
-              state: (s) {
-                state = s;
-                log("value $s");
-                log("state $state");
-              },
-              country: (c) {
-                country = c;
-                log("value $c");
-                log("country $country");
-              },
-            ),
+            if (isLoading)
+              CountryPicker(
+                city: (value) {
+                  city = value;
+                  log("value $value");
+                  log("city $city");
+                },
+                state: (s) {
+                  state = s;
+                  log("value $s");
+                  log("state $state");
+                },
+                country: (c) {
+                  country = c;
+                  log("value $c");
+                  log("country $country");
+                },
+              ),
+
             SizedBox(height: 10),
-            SizedBox(width: width * 0.01), // Adds some space between the two fields
+            SizedBox(
+                width: width * 0.01), // Adds some space between the two fields
             TextFormField(
               controller: _postalcodeController,
               keyboardType: TextInputType.number,
@@ -217,7 +227,8 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
             ),
             SizedBox(height: 10),
             SizedBox(
-              width: double.infinity, // Make the button take the full width of its parent
+              width: double
+                  .infinity, // Make the button take the full width of its parent
               child: ElevatedButton(
                 onPressed: () async {
                   ZBotToast.loadingShow();
@@ -226,10 +237,13 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 20), // Adjust vertical padding as needed
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 20), // Adjust vertical padding as needed
                 ),
                 child: Text(
-                  context.read<BaseVm>().additionalInfoModel == null ? "Confirm" : "Update",
+                  context.read<BaseVm>().additionalInfoModel == null
+                      ? "Confirm"
+                      : "Update",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: width * 0.01,
@@ -299,12 +313,18 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
                       Expanded(
                         child: Text(
                           "Cart Subtotal:",
-                          style: TextStyle(color: Colors.black, fontSize: width * 0.009, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: width * 0.009,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
                         '\$${subtotal.toStringAsFixed(2)}',
-                        style: TextStyle(color: Colors.black, fontSize: width * 0.009, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: width * 0.009,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -324,7 +344,10 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
                       ),
                       Text(
                         "Free",
-                        style: TextStyle(color: Colors.green, fontSize: width * 0.009, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.green,
+                            fontSize: width * 0.009,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -335,14 +358,20 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
                       Expanded(
                         child: Text(
                           "Discount:",
-                          style: TextStyle(color: Colors.black, fontSize: width * 0.009, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: width * 0.009,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
                         '\$${discount.toStringAsFixed(2)}',
                         // '₹{discount.toStringAsFixed(2)}',
 
-                        style: TextStyle(color: Colors.red, fontSize: width * 0.009, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: width * 0.009,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -374,14 +403,19 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
                   const SizedBox(height: 16.0),
                   Center(
                     child: SizedBox(
-                      width: double.infinity, // Make the button take the full width of its parent
+                      width: double
+                          .infinity, // Make the button take the full width of its parent
                       child: ElevatedButton(
                         onPressed: () {
-                          List<CartItem> cartItems = context.read<BaseVm>().cartItems;
+                          List<CartItem> cartItems =
+                              context.read<BaseVm>().cartItems;
 
                           // cart epmty list validation
                           if (cartItems.isEmpty) {
-                            ZBotToast.showToastError(title: 'oops', message: "Please Add some products to place order");
+                            ZBotToast.showToastError(
+                                title: 'oops',
+                                message:
+                                    "Please Add some products to place order");
                             print("Your cart is empty.");
                             return;
                           }
@@ -511,7 +545,8 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
       if (userId != null && userId != '') {
         if (context.read<BaseVm>().additionalInfoModel == null) {
           // Create a new document reference with an auto-generated ID
-          DocumentReference docRef = FirebaseFirestore.instance.collection('additional_info').doc();
+          DocumentReference docRef =
+              FirebaseFirestore.instance.collection('additional_info').doc();
           // // Get the generated document ID
           String docId = docRef.id;
           ///////// Now, set the data with the generated docId as the category_id
@@ -536,7 +571,10 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
             'phone': _phoneController.text.trim(),
             'role': mapUser!['role'],
           };
-          await FirebaseFirestore.instance.collection('users').doc(userId).update({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .update({
             'phone': _phoneController.text.trim(),
           });
           await HiveStorage.setHive(map);
@@ -544,7 +582,10 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
         } else {
           // here have to update these things.
 
-          await FirebaseFirestore.instance.collection('additional_info').doc(context.read<BaseVm>().additionalInfoModel?.id).update({
+          await FirebaseFirestore.instance
+              .collection('additional_info')
+              .doc(context.read<BaseVm>().additionalInfoModel?.id)
+              .update({
             'id': context.read<BaseVm>().additionalInfoModel?.id,
             'user_id': userId,
             'contact_info': {
@@ -566,7 +607,10 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
             'phone': _phoneController.text.trim(),
           };
           log("message============================$map");
-          await FirebaseFirestore.instance.collection('users').doc(userId).update({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .update({
             'phone': _phoneController.text.trim(),
           });
           await HiveStorage.update(map);
@@ -592,7 +636,8 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
       return;
     }
     ZBotToast.loadingShow();
-    DocumentReference docRef = FirebaseFirestore.instance.collection('orders').doc();
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection('orders').doc();
 
     String docId = docRef.id;
 
@@ -611,7 +656,12 @@ class _ShippingSummaryWidgetState extends State<ShippingSummaryWidget> {
     Map<String, dynamic> m = {
       "tracking_number": docId,
       "payment_status": "pending",
-      "payment_method": {"cvv": "", "Card_holder_name": "", "expiry_date": "", "type": "COD"},
+      "payment_method": {
+        "cvv": "",
+        "Card_holder_name": "",
+        "expiry_date": "",
+        "type": "COD"
+      },
       "tax_amount": taxAmount,
       "total_amount": grandTotal,
       "items": list,

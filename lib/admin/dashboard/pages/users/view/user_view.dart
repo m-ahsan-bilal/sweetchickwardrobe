@@ -19,12 +19,23 @@ class _UserViewState extends State<UserView> {
 
   @override
   void initState() {
+    super.initState();
+    // Fetch users when the view is initialized
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       userDataSource = UserModelGridSource(isWebOrDesktop: true);
+
+      Provider.of<UserVM>(context, listen: false).getUsers();
       Get.forceAppUpdate();
     });
-    super.initState();
   }
+  // @override
+  // void initState() {
+  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+  //     userDataSource = UserModelGridSource(isWebOrDesktop: true);
+  //     Get.forceAppUpdate();
+  //   });
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -40,20 +51,20 @@ class _UserViewState extends State<UserView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-              // filterStatusButton(name: 'all', index: 0, vm: vm),
-              // filterStatusButton(name: 'active', index: 1, vm: vm),
-              // filterStatusButton(name: 'block', index: 2, vm: vm),
-              //     const Spacer(),
-              //     SizedBox(
-              //       height: 35,
-              //       width: 52.sp,
-              //       child: Center(child: searchField(vm)),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // filterStatusButton(name: 'all', index: 0, vm: vm),
+                  // filterStatusButton(name: 'active', index: 1, vm: vm),
+                  // filterStatusButton(name: 'block', index: 2, vm: vm),
+                  const Spacer(),
+                  SizedBox(
+                    height: 35,
+                    width: 52.sp,
+                    child: Center(child: searchField(vm)),
+                  ),
+                ],
+              ),
               Flexible(
                 child: vm.userList.isEmpty
                     ? Center(
@@ -96,7 +107,8 @@ class _UserViewState extends State<UserView> {
     );
   }
 
-  Widget filterStatusButton({required String name, required int index, required UserVM vm}) {
+  Widget filterStatusButton(
+      {required String name, required int index, required UserVM vm}) {
     return InkWell(
       onTap: () {
         setState(() {
@@ -110,7 +122,9 @@ class _UserViewState extends State<UserView> {
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         margin: const EdgeInsets.only(top: 5, bottom: 12, right: 10),
         decoration: BoxDecoration(
-          color: vm.selectedIndex == index ? R.colors.black : R.colors.hintTextColor,
+          color: vm.selectedIndex == index
+              ? R.colors.black
+              : R.colors.hintTextColor,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(

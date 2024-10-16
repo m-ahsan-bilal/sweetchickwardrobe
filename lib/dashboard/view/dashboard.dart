@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:sweetchickwardrobe/dashboard/view/widgets/category_widget.dart';
 import 'package:sweetchickwardrobe/dashboard/view/widgets/product_widget.dart';
 import 'package:sweetchickwardrobe/dashboard/vm/base_vm.dart';
@@ -41,7 +42,7 @@ class _DashboardViewState extends State<DashboardView> {
           children: [
             GlobalWidgets.buildHeader(context),
             buildBanner(context),
-            buildCategories(context),
+            // buildCategories(context),
             buildProducts(context),
             GlobalWidgets.buildFooterWidget(context),
           ],
@@ -50,39 +51,106 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 
+  PageController pageController = PageController();
+
   Widget buildBanner(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        height: 250,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(
-                context.watch<BaseVm>().appData?.bannerImage ?? ""),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            context.watch<BaseVm>().appData?.bannerText ?? "",
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              shadows: [
-                BoxShadow(
-                  color: R.colors.green,
-                  blurRadius: 12,
-                  offset: const Offset(1, 1),
-                  spreadRadius: 5,
-                )
-              ],
+    final products = context.read<BaseVm>().products;
+
+    return SizedBox(
+      height: 250, // height of the banner
+      child: PageView.builder(
+        itemCount:
+            products.length > 5 ? 5 : products.length, // limit to 5 items
+        itemBuilder: (context, index) {
+          final product = products[index];
+          return InkWell(
+            onTap: () {
+              // Handle product tap
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: product.imageUrl?.isEmpty ?? false
+                      ? AssetImage(R.images.logo)
+                      : NetworkImage(product.imageUrl?.first ??
+                          ""), // assuming each product has a bannerImage
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Center(
+                    child: Text(
+                      product.name ??
+                          "", // assuming each product has a bannerText
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          BoxShadow(
+                            color: R.colors.green,
+                            blurRadius: 12,
+                            offset: const Offset(1, 1),
+                            spreadRadius: 5,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SmoothPageIndicator(
+                      controller: pageController,
+                      effect: WormEffect(dotColor: R.colors.themePink),
+                      count: products.length > 5 ? 5 : products.length,
+                      onDotClicked: (index) {
+                        pageController.jumpToPage(index);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
+
+  // Widget buildBanner(BuildContext context) {
+  //   return InkWell(
+  //     onTap: () {},
+  //     child: Container(
+  //       height: 250,
+  //       decoration: BoxDecoration(
+  //         image: DecorationImage(
+  //           image: NetworkImage(
+  //               context.watch<BaseVm>().appData?.bannerImage ?? ""),
+  //           fit: BoxFit.cover,
+  //         ),
+  //       ),
+  //       child: Center(
+  //         child: Text(
+  //           context.watch<BaseVm>().appData?.bannerText ?? "",
+  //           style: TextStyle(
+  //             fontSize: 24,
+  //             color: Colors.white,
+  //             fontWeight: FontWeight.bold,
+  //             shadows: [
+  //               BoxShadow(
+  //                 color: R.colors.green,
+  //                 blurRadius: 12,
+  //                 offset: const Offset(1, 1),
+  //                 spreadRadius: 5,
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget buildCategories(BuildContext context) {
     return SingleChildScrollView(

@@ -10,10 +10,16 @@ class CartSummaryWidget extends StatefulWidget {
 }
 
 class _CartSummaryWidgetState extends State<CartSummaryWidget> {
+// subtotal
   double get subtotal => context
-      .read<BaseVm>()
+      .watch<BaseVm>()
       .cartItems
       .fold(0, (sum, item) => sum + (item.product.price ?? 0) * item.quantity);
+  // double get subtotal => context
+  //     .read<BaseVm>()
+  //     .cartItems
+  //     .fold(0, (sum, item) => sum + (item.product.price ?? 0) * item.quantity);
+
   @override
   Widget build(BuildContext context) {
     return Padding(

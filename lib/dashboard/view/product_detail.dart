@@ -30,7 +30,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,11 +60,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       return Padding(
                                         padding:
                                             const EdgeInsets.only(right: 8.0),
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              widget.product.imageUrl?[index] ??
-                                                  "",
+                                        child: Image.network(
+                                          widget.product.imageUrl?[index] ?? "",
                                           fit: BoxFit.cover,
+                                          errorBuilder: (context, url, error) {
+                                            return Icon(
+                                              Icons.error,
+                                              size: 55,
+                                            );
+                                          },
                                         ),
                                       );
                                     },
@@ -196,11 +199,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               const SizedBox(height: 16.0),
 
                               // Stock availability
-                              Text(
-                                  "Items left in stock: ${widget.product.stockQuantity}",
-                                  style: const TextStyle(
-                                      fontSize: 16, color: Colors.red)),
-                              const SizedBox(height: 16.0),
+                              // Text(
+                              //     "Items left in stock: ${widget.product.stockQuantity}",
+                              //     style: const TextStyle(
+                              //         fontSize: 16, color: Colors.red)),
+                              // const SizedBox(height: 16.0),
                               // Row(
                               //   children: [
                               //     Expanded(
@@ -228,7 +231,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               //     ),
                               //   ],
                               // ),
-                              
+
                               SizedBox(
                                 height: 10,
                               ),

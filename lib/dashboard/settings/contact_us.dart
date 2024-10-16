@@ -121,17 +121,31 @@ class _ContactUsState extends State<ContactUs> {
                     log("email ${mapUser['email']}");
                     log("id ${mapUser['id']}");
 
+                    // Get the actual text from the controllers
+                    String titleText = titleController.text.trim();
+                    String messageText = messageController.text.trim();
+
+                    if (titleText.isEmpty || messageText.isEmpty) {
+                      ZBotToast.showToastError(
+                          message: "Title or message cannot be empty.");
+                      return;
+                    }
+
                     // Define your Firestore collection and document
                     DocumentReference docRef = FirebaseFirestore.instance
                         .collection('contact_us')
                         .doc();
                     String docId = docRef.id;
-                    docRef.set({
+
+                    // Set the actual text values from the controllers
+                    await docRef.set({
                       'id': docId,
                       'user_id': mapUser['id'],
                       'email': mapUser['email'],
-                      'title': "title",
-                      'message': "message",
+                      'title':
+                          titleText, // passing the text get from controllers
+                      'message':
+                          messageText, // passing the text get from controllers
                     });
 
                     // Log success message

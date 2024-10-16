@@ -1,5 +1,6 @@
 ///Package imports
 import 'package:flutter/material.dart';
+
 /// Core theme import
 // ignore: depend_on_referenced_packages
 import 'package:syncfusion_flutter_core/theme.dart';
@@ -73,7 +74,10 @@ class UserGridState extends SampleViewState {
     );
   }
 
-  GridColumn _gridColumn({double? width, required String columnName, AlignmentGeometry? alignment}) {
+  GridColumn _gridColumn(
+      {double? width,
+      required String columnName,
+      AlignmentGeometry? alignment}) {
     return GridColumn(
       width: width ?? 100,
       autoFitPadding: const EdgeInsets.all(8),
@@ -108,7 +112,8 @@ class UserGridState extends SampleViewState {
         delegate: userDataSource,
         availableRowsPerPage: const <int>[10, 20, 25],
         visibleItemsCount: 5,
-        pageCount: (userDataSource.tickets.length / _rowsPerPage).ceilToDouble(),
+        pageCount:
+            (userDataSource.tickets.length / _rowsPerPage).ceilToDouble(),
         onRowsPerPageChanged: (int? rowsPerPage) {
           setState(() {
             _rowsPerPage = rowsPerPage!;
@@ -119,7 +124,8 @@ class UserGridState extends SampleViewState {
   }
 
   Widget _buildLayoutBuilder() {
-    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraint) {
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraint) {
       return Column(
         children: [
           SizedBox(
